@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MindScribe.Models;
+using MindScribe.ViewModels;
 using System.Diagnostics;
 
 namespace MindScribe.Controllers
@@ -13,11 +14,14 @@ namespace MindScribe.Controllers
             _logger = logger;
         }
 
+        [Route("")]
+        [Route("[controller]/[action]")]
         public IActionResult Index()
         {
-            return View();
+            return View(new MainViewModel());
         }
 
+        [Route("[action]")]
         public IActionResult Privacy()
         {
             return View();

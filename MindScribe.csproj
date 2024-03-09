@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Extentions\" />
-    <Folder Include="ViewModels\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Егор\\source\\repos\\MindScribe\\MindScribe\\MindScribe.csproj": {}
+    "C:\\Users\\rozhd\\source\\repos\\MindScribe\\MindScribe.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Егор\\source\\repos\\MindScribe\\MindScribe\\MindScribe.csproj": {
+    "C:\\Users\\rozhd\\source\\repos\\MindScribe\\MindScribe.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Егор\\source\\repos\\MindScribe\\MindScribe\\MindScribe.csproj",
+        "projectUniqueName": "C:\\Users\\rozhd\\source\\repos\\MindScribe\\MindScribe.csproj",
         "projectName": "MindScribe",
-        "projectPath": "C:\\Users\\Егор\\source\\repos\\MindScribe\\MindScribe\\MindScribe.csproj",
-        "packagesPath": "C:\\Users\\Егор\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Егор\\source\\repos\\MindScribe\\MindScribe\\obj\\",
+        "projectPath": "C:\\Users\\rozhd\\source\\repos\\MindScribe\\MindScribe.csproj",
+        "packagesPath": "C:\\Users\\rozhd\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\rozhd\\source\\repos\\MindScribe\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Егор\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\rozhd\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -39,11 +39,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -86,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }
