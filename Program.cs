@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MindScribe.Data;
+using MindScribe.Data.UoW;
 using MindScribe.Extentions;
 using MindScribe.Models;
 
@@ -18,6 +19,7 @@ builder.Services.AddSingleton(mapper);
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))
+    .AddScoped<UnitOfWork>()
     .AddIdentity<User, IdentityRole>(opts =>
     {
         opts.Password.RequiredLength = 5;

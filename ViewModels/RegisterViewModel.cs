@@ -15,6 +15,8 @@ namespace MindScribe.ViewModels
         [Required]
         [Display(Name = "Email")]
         public string EmailReg { get; set; }
+
+
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
