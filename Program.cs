@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MindScribe.Data;
@@ -29,6 +30,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
         opts.Password.RequireUppercase = false;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.LoginPath = "/Login"; // Путь к странице входа
+            options.AccessDeniedPath = "/AccessDenied"; // Путь к странице доступа запрещен
+        });
 
 
 var serviceProvider = builder.Services.BuildServiceProvider();

@@ -67,8 +67,15 @@ namespace MindScribe.Controllers
         [Route("Login")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model) 
         {
+            //LoginViewModel model = new LoginViewModel()
+            //{
+            //    UserName = "User1",
+            //    Password = "123456",
+            //    RememberMe = false,
+            //};
+
             if (ModelState.IsValid)
             {
 
