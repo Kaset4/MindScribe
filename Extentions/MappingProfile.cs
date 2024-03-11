@@ -17,6 +17,10 @@ namespace MindScribe.Extentions
             CreateMap<Article, ArticleViewModel>();
             CreateMap<Article, ArticleEditViewModel>();
             CreateMap<ArticleEditViewModel, Article>();
+
+            CreateMap<CommentViewModel, Comment>();
+
+            CreateMap<ArticleTagViewModel, ArticleTag>();
         }
     }
 }

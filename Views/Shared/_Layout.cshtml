@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -10,6 +14,8 @@
 </head>
 <body>
     <header>
+
+        
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MindScribe</a>
@@ -28,7 +34,16 @@
                     </ul>
                 </div>
             </div>
+            <div class="align-items-center">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <form method="post" asp-controller="AccountManager" asp-action="Logout">
+                        <input class="d-flex align-items-center enter_submit" type="submit" aria-label="Close" value="Выход" />
+                    </form>
+                }
+            </div>
         </nav>
+        
     </header>
     <div class="container">
         <main role="main" class="pb-3">

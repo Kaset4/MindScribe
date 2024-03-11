@@ -1,4 +1,7 @@
-﻿@model MindScribe.ViewModels.UserViewModel
+﻿@using Microsoft.AspNetCore.Identity
+
+@model MindScribe.ViewModels.UserViewModel
+@inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "User";
 }
@@ -21,8 +24,22 @@
             <div class="user-about">
                 <div class="text-color-gray">О себе: <span class="text-color-black">@Model.User.About</span></div>
                 <div class="text-color-gray">Email: <span class="text-color-black">@Model.User.Email</span></div>
+                <div class="text-color-gray">
+                    Роль: <span class="text-color-black">
+                        @foreach (var role in await UserManager.GetRolesAsync(Model.User))
+                        {
+                            @role <br />
+                        }
+                    </span>
+                </div>
             </div>
         </div>
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+        {
+            <form method="get" asp-controller="AccountManager" asp-action="AdminPanel">
+                <input type="submit" value="Панель администратора"/>
+            </form>
+        }
         <div>
             <div>
                 <label class="gray-text">Список статей пользователя:</label>

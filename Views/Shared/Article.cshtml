@@ -19,11 +19,11 @@
     <div>
         
         <p>Теги:</p>
-        <ul class="dropdown-menu">
+        <ul >
             @foreach (var tag in @Model.Tags)
             {
                <li>
-                    <div class="dropdown-item">
+                    <div>
                         <p>@tag.NameTag</p>
                    </div>
                </li>
@@ -35,6 +35,17 @@
         <p><b>Дата обновления:</b>@Model.Updated_at</p>
         <p><b>Автор: @await Model.GetFullNameAuthor(userManager)</p>
     </div>
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+    {
+        <div>
+            <form asp-controller="Article" asp-action="DeleteArticle" method="post">
+                <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
+                <button type="submit" class="btn btn-sm btn-danger">
+                    Удалить
+                </button>
+            </form>
+        </div>
+    }
     <div>
         <label>Комментарии: </label>
         <div>
@@ -46,9 +57,38 @@
         <div>
             @foreach (var comment in Model.Comments)
             {
-                <h5>@comment.GetFullNameComment(userManager)</h5>
+                <p>@await comment.GetFullNameComment(userManager)</p>
                 <p>@comment.Content_comment</p>
                 <p>Дата создания: @comment.Created_at</p>
+                @if (User.Identity.IsAuthenticated &&
+               (User.IsInRole("Admin") || User.IsInRole("Moderator") || comment.User_id == userManager.GetUserId(User)))
+                {
+                    <form method="post" action="/Article/{id}/DeleteComment">
+                        <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <input type="submit" value="Удалить комментарий"/>
+                    </form>
+
+                    <input type="button" onclick="toggleEditForm('@comment.Id')" value="Редактировать комментарий" />
+                    <div id="editForm-@comment.Id" style="display: none;">
+                        <form method="post" action="/Article/{id}/EditComment">
+                            <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
+                            <input type="hidden" name="commentId" value="@comment.Id" />
+                            <textarea name="content">@comment.Content_comment</textarea>
+                            <input type="submit" value="Сохранить изменения" />
+                        </form>
+                    </div>
+                    <script>
+                        function toggleEditForm(commentId) {
+                            var editForm = document.getElementById('editForm-' + commentId);
+                            if (editForm.style.display === 'none') {
+                                editForm.style.display = 'block';
+                            } else {
+                                editForm.style.display = 'none';
+                            }
+                        }
+                    </script>
+                }
             }
         </div>
     </div>

@@ -5,44 +5,75 @@
 
 <div>
     <h3>Форма создания статьи</h3>
-    <form method="post" asp-controller="Article" asp-action="ArticleUpdate">
-        <input type="hidden" asp-for="Article_Id" value="@Model.Article_Id" />
-        <div>
-            <input asp-for="Title" class="form-control" value="@Model.Title"/>
-            <span asp-validation-for="Title" class="text-danger"></span>
-        </div>
-        <div>
-            <textarea asp-for="Content_article" class="form-control" value="@Model.Content_article"></textarea>
-            <span asp-validation-for="Content_article" class="text-danger"></span>
-        </div>
-        <div>
-
-            <label>Теги:</label>
+    <div>
+        <form method="post" asp-controller="Article" asp-action="ArticleUpdate">
+            <input type="hidden" asp-for="Article_Id" value="@Model.Article_Id" />
             <div>
-                <div>
-                    <ul class="dropdown-menu">
-                        @foreach (var tag in @Model.Tags)
-                        {
-                            <li>
-                                <div class="dropdown-item">
-                                    <form method="post" asp-controller="ArticleTag" asp-action="DeleteTag">
+                <input asp-for="Title" class="form-control" value="@Model.Title" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div>
+                <textarea asp-for="Content_article" class="form-control" value="@Model.Content_article"></textarea>
+                <span asp-validation-for="Content_article" class="text-danger"></span>
+            </div>
+            <input type="submit" value="Сохранить" />
+        </form>
+    </div>
+    <br/>
+    <h6 class="mb-0">Форма создания тегов для данной статьи</h6>
+    <div>
+        <label>Теги:</label>
+        <div>
+            <div>
+                <ul>
+
+                    @foreach (var tag in @Model.Tags)
+                    {
+                        <li>
+                            <div>
+                                <div>
+                                    <form method="post" action="/ArticleEdit/{id}/DeleteTag">
                                         <label>@tag.NameTag</label>
+                                        <input type="hidden" name="tagId" value="@tag.Id" />
+                                        <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
                                         <input type="submit" class="btn btn-danger" value="Удалить" />
                                     </form>
                                 </div>
-                            </li>
-                        }
-                    </ul>
-                    <form method="post" asp-controller="ArticleTag" asp-action="CreateTag">
-                        <div>
-                            <label>Новый тег:</label>
-                            <input type="text" name="tagName" class="form-control" />
-                        </div>
-                        <input type="submit" value="Создать" />
-                    </form>
-                </div>
+                                <input type="button" onclick="toggleEditForm('@tag.Id')" value="Редактировать" />
+                                <div id="editForm-@tag.Id" style="display: none;">
+                                    <form method="post" action="/ArticleEdit/{id}/EditTag">
+                                        <input type="hidden" name="tagId" value="@tag.Id" />
+                                        <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
+                                        <label>Новое имя:</label>
+                                        <input type="text" name="newName" class="form-control" value="@tag.NameTag" />
+                                        <input type="submit" value="Сохранить" />
+                                    </form>
+                                </div>
+                                <script>
+                                    function toggleEditForm(tagId) {
+                                        var editForm = document.getElementById('editForm-' + tagId);
+                                        if (editForm.style.display === 'none') {
+                                            editForm.style.display = 'block';
+                                        } else {
+                                            editForm.style.display = 'none';
+                                        }
+                                    }
+                                </script>
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <form method="post" action="/ArticleEdit/{id}/CreateTag">
+                    <div>
+                        <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
+                        <label>Новый тег:</label>
+                        <input type="text" name="tagName" class="form-control" />
+                    </div>
+                    <input type="submit" value="Создать тег" />
+                </form>
             </div>
         </div>
-        <input type="submit" value="Сохранить" />
-    </form>
+    </div>
 </div>
+
+

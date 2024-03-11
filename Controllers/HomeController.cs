@@ -18,6 +18,11 @@ namespace MindScribe.Controllers
         [Route("[controller]/[action]")]
         public IActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("MyPage", "AccountManager");
+            }
+
             return View(new MainViewModel());
         }
 

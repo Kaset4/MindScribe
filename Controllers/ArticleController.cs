@@ -45,6 +45,8 @@ namespace MindScribe.Controllers
 
             var article= repository.GetArticleById(id);
 
+
+
             var model = _mapper.Map<ArticleViewModel>(article);
 
             ViewData["UserManager"] = _userManager;
@@ -123,7 +125,34 @@ namespace MindScribe.Controllers
                 Content_article = article.Content_article,
                 Title = article.Title,
                 Created_at = (DateTime)article.Created_at,
-                Updated_at = (DateTime)article.Updated_at
+                Updated_at = (DateTime)article.Updated_at,
+                Tags = article.Tags
+            };
+
+            ViewData["UserManager"] = _userManager;
+
+            return View("ArticleEdit", editArticleViewModel);
+        }
+
+        [Authorize]
+        [Route("ArticleEdit/{id}")]
+        [HttpGet]
+        public IActionResult ArticleEditGet(int id)
+        {
+            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+
+            var article = repository.GetArticleById(id);
+
+            //var model = _mapper.Map<ArticleEditViewModel>(article);
+
+            var editArticleViewModel = new ArticleEditViewModel()
+            {
+                Article_Id = id,
+                Content_article = article.Content_article,
+                Title = article.Title,
+                Created_at = (DateTime)article.Created_at,
+                Updated_at = (DateTime)article.Updated_at,
+                Tags = article.Tags
             };
 
             ViewData["UserManager"] = _userManager;
@@ -159,7 +188,6 @@ namespace MindScribe.Controllers
                     article.Created_at = article.Created_at;
                     article.Title = model.Title;
                     article.Content_article = model.Content_article;
-                    article.Tags = model.Tags;
 
                     repository.UpdateArticle(article);
 

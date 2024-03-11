@@ -1,0 +1,30 @@
+﻿@model List<User>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    ViewData["Title"] = "Article Page";
+    var userManager = ViewData["UserManager"] as UserManager<User>;
+}
+
+@if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+{
+    <div>
+        <div>
+            <h3 class="mb-0">Список пользователей:</h3>
+            <ul>
+                @foreach (var user in Model)
+                {
+                    <li>
+                        @user.UserName
+                        <form asp-controller="AccountManager" asp-action="DeleteUser">
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <input type="submit" class="btn-danger" value="Удалить" />
+                        </form>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

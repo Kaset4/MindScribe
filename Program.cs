@@ -22,8 +22,10 @@ builder.Services.AddSingleton(mapper);
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))
     .AddScoped<UnitOfWork>()
+    .AddScoped<IRepository<User>, UserRepository>()
     .AddCustomRepository<Article, ArticleRepository>()
     .AddCustomRepository<Comment, CommentRepository>()
+    .AddCustomRepository<ArticleTag, ArticleTagRepository>()
     .AddIdentity<User, IdentityRole>(opts =>
     {
         opts.Password.RequiredLength = 5;

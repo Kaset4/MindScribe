@@ -10,7 +10,7 @@ namespace MindScribe.Repositories
         {
             builder.ToTable("Comment").HasKey(p => p.Id);
             builder.Property(x => x.Id).UseIdentityColumn();
-            builder.Property(x => x.Article_id).HasColumnName("Article_id");
+            builder.Property(x => x.ArticleId).HasColumnName("Article_id");
         }
     }
 }

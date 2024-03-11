@@ -11,6 +11,7 @@ using MindScribe.ViewModels;
 using MindScribe.ViewModels.EditViewModel;
 using MindScribe.ViewModels.FromModel;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace MindScribe.Controllers
 {
@@ -211,21 +212,7 @@ namespace MindScribe.Controllers
 
         // /Register
 
-        [Route("DeleteUser")]
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> DeleteUser(string id)
-        {
-
-            var user = await _userManager.FindByIdAsync(id);
-
-            var repository = _unitOfWork.GetRepository<User>() as UserRepository;
-
-            repository.DeleteUser(user);
-
-            return RedirectToAction("MyPage", "AccountManager");
-
-        }
+        
 
         private async Task<List<Article>> GetAllArticleByAuthor(User user)
         {
@@ -246,5 +233,34 @@ namespace MindScribe.Controllers
 
             return repository.GetArticlesByAuthorId(result);
         }
+
+        // Admin
+
+        [Route("AdminPanel")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> AdminPanel()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return View("AdminPanel", users);
+        }
+
+        [Route("DeleteUser")]
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            var repository = _unitOfWork.GetRepository<User>() as UserRepository;
+
+            repository.DeleteUser(user);
+
+            return RedirectToAction("AdminPanel", "AccountManager");
+
+        }
+
+        // /Admin
     }
 }

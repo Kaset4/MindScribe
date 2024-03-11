@@ -6,8 +6,8 @@ namespace MindScribe.ViewModels
 {
     public class CommentViewModel
     {
-        public int Id { get; set; }
-        public int Article_id { get; set; }
+       // public int Id { get; set; }
+        public int ArticleId { get; set; }
 
         [Required]
         [Display(Name = "Комментарий", Prompt = "Введите текст")]

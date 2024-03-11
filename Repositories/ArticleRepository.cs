@@ -5,13 +5,24 @@ namespace MindScribe.Repositories
 {
     public class ArticleRepository: Repository<Article>
     {
+        private readonly ApplicationDbContext _context;
         public ArticleRepository(ApplicationDbContext db) : base(db)
         {
-
+            _context = db;
         }
         public Article GetArticleById(int articleId)
         {
-            return Get(articleId);
+            var article = Get(articleId);
+
+            // Явная загрузка связанных комментариев
+            _context.Entry(article)
+                    .Collection(a => a.Comments)
+                    .Load();
+            _context.Entry(article)
+                    .Collection(a => a.Tags)
+                    .Load();
+
+            return article;
         }
 
         public List<Article> GetAllArticles()
