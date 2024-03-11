@@ -1,0 +1,24 @@
+﻿@model MindScribe.ViewModels.LoginViewModel;
+
+@{
+    ViewData["Title"] = "Login Page";
+}
+
+<div>
+    <h3>Форма авторизации</h3>
+    <form method="post" asp-controller="AccountManager" asp-action="Login">
+        <div>
+            <input asp-for="UserName" class="form-control" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="Password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="RememberMe" />
+            <label asp-for="RememberMe"></label>
+        </div>
+        <input type="submit" value="Авторизация" />
+    </form>
+</div>

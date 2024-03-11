@@ -1,4 +1,5 @@
 ﻿@model MindScribe.ViewModels.MainViewModel;
+
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -6,10 +7,12 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <form method="post" asp-controller="AccountManager" asp-action="Register">
+    <form method="get" asp-controller="AccountManager" asp-action="Register">
         <input type="submit" value="Регистрация"/>
     </form>
-    <form method="post" asp-controller="AccountManager" asp-action="Login">
+    
+    <form method="get" asp-controller="AccountManager" asp-action="Login">
         <input type="submit" value="Авторизация" />
     </form>
+    
 </div>

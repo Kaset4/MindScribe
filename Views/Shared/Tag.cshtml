@@ -1,0 +1,32 @@
+﻿@* @model MindScribe.ViewModels.ArticleTagViewModel;
+
+@{
+    ViewData["Title"] = "Tag";
+}
+
+<div>
+    <div>
+        <ul class="dropdown-menu">
+            @foreach (var tag in @Model.Tags)
+            {
+                <li>
+                    <div class="dropdown-item">
+                        <p>@tag.NameTag</p>
+                        <form method="post" asp-controller="ArticleTag" asp-action="UpdateTag">
+                            <input type="submit" value="Редактировать" />
+                        </form>
+                        <form method="post" asp-controller="ArticleTag" asp-action="DeleteTag">
+                            <input type="submit" value="Удалить" />
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+        <form method="post" asp-controller="ArticleTag" asp-action="CreateTag">
+            <input type="submit" value="Создать" />
+        </form>
+    </div>
+    <form>
+        <input type="submit" value="Создать" />
+    </form>
+</div> *@

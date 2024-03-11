@@ -34,9 +34,9 @@ namespace MindScribe.Repositories
             Delete(articleId);
         }
 
-        public List<Article> GetArticlesByAuthorId(string authorId)
+        public List<Article> GetArticlesByAuthorId(User user)
         {
-            return Set.Where(article => article.User_id == authorId).ToList();
+            return Set.Where(article => article.User_id == user.Id).ToList();
         }
     }
 }

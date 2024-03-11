@@ -21,11 +21,11 @@ namespace MindScribe.ViewModels.EditViewModel
 
         [DataType(DataType.Text)]
         [Display(Name = "Ссылка", Prompt = "Ссылка на картинку")]
-        public string Image { get; set; }
+        public string? Image { get; set; }
 
         [DataType(DataType.Text)]
         [Display(Name = "О себе", Prompt = "Введите информацию о себе")]
-        public string About { get; set; }
+        public string? About { get; set; }
 
         public string UserId { get; set; }
     }

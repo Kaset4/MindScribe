@@ -1,0 +1,37 @@
+﻿@model MindScribe.ViewModels.RegisterViewModel;
+
+@{
+    ViewData["Title"] = "Register Page";
+}
+
+<div>
+    <h3>Форма регистрации</h3>
+    <form method="post" asp-controller="AccountManager" asp-action="Register">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="Login" class="form-control" />
+            <span asp-validation-for="Login" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="EmailReg" class="form-control" />
+            <span asp-validation-for="EmailReg" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="PasswordConfirm" class="form-control" />
+            <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
+        </div>
+        <div>
+            <input asp-for="PasswordReg" class="form-control" />
+            <span asp-validation-for="PasswordReg" class="text-danger"></span>
+        </div>
+        <input type="submit" value="Регистрация" />
+    </form>
+</div>

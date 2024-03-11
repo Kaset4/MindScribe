@@ -14,7 +14,7 @@ using System.Security.Claims;
 
 namespace MindScribe.Controllers
 {
-    public class AccountManagerController: Controller
+    public class AccountManagerController : Controller
     {
         private IMapper _mapper;
 
@@ -36,7 +36,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return View("Home/Login");
+            return View("Login");
         }
 
         [Route("Edit")]
@@ -67,14 +67,8 @@ namespace MindScribe.Controllers
         [Route("Login")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model) 
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            //LoginViewModel model = new LoginViewModel()
-            //{
-            //    UserName = "User1",
-            //    Password = "123456",
-            //    RememberMe = false,
-            //};
 
             if (ModelState.IsValid)
             {
@@ -143,6 +137,8 @@ namespace MindScribe.Controllers
 
             var model = new UserViewModel(result);
 
+            model.Articles = await GetAllArticleByAuthor(model.User);
+
             return View("User", model);
         }
 
@@ -175,26 +171,17 @@ namespace MindScribe.Controllers
         }
 
         //Register
-       [Route("Register")]
-       [HttpGet]
+        [Route("Register")]
+        [HttpGet]
         public IActionResult Register()
         {
-            return View("Home/Register");
+            return View("Register");
         }
 
         [Route("Register")]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model) 
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            //RegisterViewModel model = new RegisterViewModel()
-            //{
-            //    EmailReg = "User3@mail.ru",
-            //    FirstName = "User3FirstName",
-            //    LastName = "User3LastName",
-            //    Login = "User3",
-            //    PasswordReg = "123456",
-            //    PasswordConfirm = "123456"
-            //};
 
             if (ModelState.IsValid)
             {
@@ -217,12 +204,15 @@ namespace MindScribe.Controllers
                     }
                 }
             }
-            return View("Index", model);
+            return View("Register", model);
         }
+
+
 
         // /Register
 
         [Route("DeleteUser")]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
@@ -235,6 +225,26 @@ namespace MindScribe.Controllers
 
             return RedirectToAction("MyPage", "AccountManager");
 
+        }
+
+        private async Task<List<Article>> GetAllArticleByAuthor(User user)
+        {
+            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+
+
+            return repository.GetArticlesByAuthorId(user);
+
+        }
+
+        private async Task<List<Article>> GetAllArticleByAuthor()
+        {
+            var user = User;
+
+            var result = await _userManager.GetUserAsync(user);
+
+            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+
+            return repository.GetArticlesByAuthorId(result);
         }
     }
 }

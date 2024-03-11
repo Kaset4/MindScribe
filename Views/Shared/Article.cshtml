@@ -1,0 +1,55 @@
+﻿@model MindScribe.ViewModels.ArticleViewModel;
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    ViewData["Title"] = "Article Page";
+    var userManager = ViewData["UserManager"] as UserManager<User>;
+}
+
+
+<div>
+    <div>
+        <h2>@Model.Title</h2>
+    </div>
+    <div>
+        <p>@Model.Content_article</p>
+    </div>
+    <div>
+        
+        <p>Теги:</p>
+        <ul class="dropdown-menu">
+            @foreach (var tag in @Model.Tags)
+            {
+               <li>
+                    <div class="dropdown-item">
+                        <p>@tag.NameTag</p>
+                   </div>
+               </li>
+            }
+        </ul>
+    </div>
+    <div>
+        <p><b>Дата создания:</b>@Model.Created_at</p>
+        <p><b>Дата обновления:</b>@Model.Updated_at</p>
+        <p><b>Автор: @await Model.GetFullNameAuthor(userManager)</p>
+    </div>
+    <div>
+        <label>Комментарии: </label>
+        <div>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <partial name="Comment" model="Model.CommentView" />
+            }
+        </div>
+        <div>
+            @foreach (var comment in Model.Comments)
+            {
+                <h5>@comment.GetFullNameComment(userManager)</h5>
+                <p>@comment.Content_comment</p>
+                <p>Дата создания: @comment.Created_at</p>
+            }
+        </div>
+    </div>
+</div>

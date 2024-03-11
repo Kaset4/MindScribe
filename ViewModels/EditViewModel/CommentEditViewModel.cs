@@ -9,7 +9,7 @@ namespace MindScribe.ViewModels.EditViewModel
         public string Content_comment { get; set; }
 
         public int Id { get; set; }
-        public string Article_id { get; set; }
+        public int Article_id { get; set; }
         public DateTime Created_at { get; set; }
         public DateTime Updated_at { get; set; }
 

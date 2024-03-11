@@ -1,0 +1,14 @@
+﻿@model MindScribe.ViewModels.CommentViewModel;
+
+@{
+    ViewData["Title"] = "Comment Page";
+}
+
+<div>
+    <form method="post" action="/Article/{id}/SendComment">
+        <input asp-for="Content_comment" class="form-control" />
+        <span class="text-danger">@Html.ValidationMessageFor(model => model.Content_comment)</span>
+        <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
+        <input type="submit" value="Отправить" />
+    </form>
+</div>

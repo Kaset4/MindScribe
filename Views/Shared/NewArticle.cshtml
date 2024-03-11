@@ -1,0 +1,52 @@
+﻿@model MindScribe.ViewModels.ArticleViewModel;
+
+@{
+    ViewData["Title"] = "New Article Page";
+}
+
+<div>
+    <h3>Форма создания статьи</h3>
+    <form method="post" asp-controller="Article" asp-action="CreateArticle">
+        <div>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div>
+            <textarea asp-for="Content_article" class="form-control"></textarea>
+            <span asp-validation-for="Content_article" class="text-danger"></span>
+        </div>
+        <div>
+
+            <label>Теги:</label>
+            <div>
+                <div>
+                    @if (Model != null && Model.Tags != null)
+                    {
+                        <ul class="dropdown-menu">
+
+                            @foreach (var tag in @Model.Tags)
+                            {
+                                <li>
+                                    <div class="dropdown-item">
+                                        <form method="post" asp-controller="ArticleTag" asp-action="DeleteTag">
+                                            <label>@tag.NameTag</label>
+                                            <input type="submit" class="btn btn-danger" value="Удалить" />
+                                        </form>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    <form method="post" asp-controller="ArticleTag" asp-action="CreateTag">
+                        <div>
+                            <label>Новый тег:</label>
+                            <input type="text" name="tagName" class="form-control" />
+                        </div>
+                        <input type="submit" value="Создать тег" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <input type="submit" value="Создать" />
+    </form>
+</div>

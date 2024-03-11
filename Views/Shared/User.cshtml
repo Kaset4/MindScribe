@@ -1,0 +1,74 @@
+﻿@model MindScribe.ViewModels.UserViewModel
+@{
+    ViewData["Title"] = "User";
+}
+
+<div >
+    <h2 >@Model.User.LastName @Model.User.FirstName</h2>
+    <div >
+        <div>
+            <div>
+                <img src="@Model.User.Image" style="max-width: 500px"/>
+            </div>
+            <div>
+                <form method="get" asp-controller="AccountManager" asp-action="Edit">
+                    <input class="enter_submit" type="submit" value="Редактировать"/>
+                </form>
+
+            </div>
+        </div>
+        <div class="user-about-wrapper">
+            <div class="user-about">
+                <div class="text-color-gray">О себе: <span class="text-color-black">@Model.User.About</span></div>
+                <div class="text-color-gray">Email: <span class="text-color-black">@Model.User.Email</span></div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <label class="gray-text">Список статей пользователя:</label>
+
+                @if (Model.Articles.Count != 0)
+                {
+                    <div>
+                        @foreach (var article in @Model.Articles)
+                        {
+                            <div>
+                                <div class="mrgn center-align">
+                                    <a asp-controller="Article" asp-action="Index" asp-route-id="@article.Id">@article.Title</a>
+                                </div>
+                                <div class="mrgn center-align">
+                                    <form asp-controller="Article" asp-action="ArticleEdit" asp-route-id="@article.Id" method="post">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            Редактировать
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="mrgn center-align">
+                                    <form asp-controller="Article" asp-action="DeleteArticle" method="post">
+                                        <input type="hidden" name="id" value="@article.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                }
+                else
+                {
+                    <div>
+                        <label> У вас пока нет своих работ.</label>
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div>
+            <form method="get" asp-controller="Article" asp-action="NewArticle">
+                <input type="submit" value="Создать статью"/>
+            </form>
+        </div>
+    </div>
+</div>

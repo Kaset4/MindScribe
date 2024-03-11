@@ -6,6 +6,7 @@ using MindScribe.Data;
 using MindScribe.Data.UoW;
 using MindScribe.Extentions;
 using MindScribe.Models;
+using MindScribe.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddSingleton(mapper);
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))
     .AddScoped<UnitOfWork>()
+    .AddCustomRepository<Article, ArticleRepository>()
+    .AddCustomRepository<Comment, CommentRepository>()
     .AddIdentity<User, IdentityRole>(opts =>
     {
         opts.Password.RequiredLength = 5;
@@ -70,5 +73,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

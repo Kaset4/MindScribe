@@ -10,5 +10,7 @@ namespace MindScribe.ViewModels
         {
             User = user;
         }
+
+        public List<Article> Articles { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MindScribe.Models;
+using MindScribe.Repositories;
 
 namespace MindScribe.Data
 {
@@ -15,6 +16,9 @@ namespace MindScribe.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.ApplyConfiguration<Article>(new ArticleConfiguration());
+            builder.ApplyConfiguration<Comment>(new CommentConfiguration());
         }
     }
 }
