@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MindScribe")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b17065df1a74b82b7c5e21050690e05d6d56a60b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a3f0e82d91f1ed9782a8b22e37b43f75aac457aa")]
 [assembly: System.Reflection.AssemblyProductAttribute("MindScribe")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MindScribe")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

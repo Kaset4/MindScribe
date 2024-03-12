@@ -19,6 +19,7 @@ IMapper mapper = mapperConfig.CreateMapper();
 
 builder.Services.AddSingleton(mapper);
 
+
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")))
     .AddScoped<UnitOfWork>()
@@ -36,6 +37,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
     })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
@@ -47,8 +51,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         });
 
 
-var serviceProvider = builder.Services.BuildServiceProvider();
-var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -69,6 +71,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseRoleInitializerMiddleware();
 app.UseAuthentication();
 app.UseAuthorization();
 

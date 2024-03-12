@@ -7,11 +7,11 @@ namespace MindScribe.ViewModels.EditViewModel
     {
         [DataType(DataType.Text)]
         [Display(Name = "Название статьи", Prompt = "Введите название")]
-        public string Title { get; set; }
+        public string Title { get; set; } = "";
 
         [DataType(DataType.Text)]
         [Display(Name = "Текст", Prompt = "Введите текст")]
-        public string Content_article { get; set; }
+        public string Content_article { get; set; } = "";
 
         public List<ArticleTag>? Tags { get; set; }
         public List<Comment>? Comments { get; set; }

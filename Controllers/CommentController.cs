@@ -36,6 +36,12 @@ namespace MindScribe.Controllers
 
             var result = await _userManager.GetUserAsync(user);
 
+            if (result == null)
+            {
+                // Обработка случая, когда пользователь не найден
+                return NotFound("Пользователь не найден.");
+            }
+
             var userModel = new UserViewModel(result);
 
             model.User_id = userModel.User.Id;
@@ -47,9 +53,16 @@ namespace MindScribe.Controllers
 
             var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
 
-            var commentModel = _mapper.Map<Comment>(model);
-
-            repository.CreateComment(commentModel);
+            if (repository != null)
+            {
+                var commentModel = _mapper.Map<Comment>(model);
+                repository.CreateComment(commentModel);
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound("Репозиторий комментариев не найден.");
+            }
 
             return RedirectToAction("Index", "Article", new { id = Id }); // Перенаправление на страницу статьи
         }
@@ -57,13 +70,28 @@ namespace MindScribe.Controllers
         [Authorize]
         [Route("Article/{Id}/DeleteComment")]
         [HttpPost]
-        public async Task<IActionResult> DeleteComment(int Id, int commentId)
+        public IActionResult DeleteComment(int Id, int commentId)
         {
             var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
 
-            var comment = repository.GetCommentById(commentId);
-
-            repository.Delete(comment);
+            if (repository != null)
+            {
+                var comment = repository.GetCommentById(commentId);
+                if (comment != null)
+                {
+                    repository.Delete(comment);
+                }
+                else
+                {
+                    // Обработка случая, когда комментарий не найден
+                    return NotFound("Комментарий не найден.");
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound("Репозиторий комментариев не найден.");
+            }
 
             return RedirectToAction("Index", "Article", new { id = Id }); // Перенаправление на страницу статьи
         }
@@ -71,23 +99,35 @@ namespace MindScribe.Controllers
         [Authorize]
         [Route("Article/{Id}/EditComment")]
         [HttpPost]
-        public async Task<IActionResult> EditComment(int Id, int commentId, string content)
+        public IActionResult EditComment(int Id, int commentId, string content)
         {
             if (string.IsNullOrEmpty(content))
             {
                 return RedirectToAction("Index", "Article", new { id = Id });
             }
 
-            var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
-            var model = repository.GetCommentById(commentId);
-            var comment = _mapper.Map<Comment>(model);
-
-            comment.Content_comment = content;
-            comment.Updated_at = DateTime.Now;
-
-            //var comment = repository.GetCommentById(commentId);
-
-            repository.UpdateComment(comment);
+            CommentRepository? repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
+            if (repository != null)
+            {
+                var model = repository.GetCommentById(commentId);
+                if (model != null)
+                {
+                    var comment = _mapper.Map<Comment>(model);
+                    comment.Content_comment = content;
+                    comment.Updated_at = DateTime.Now;
+                    repository.UpdateComment(comment);
+                }
+                else
+                {
+                    // Обработка случая, когда комментарий не найден
+                    return NotFound("Комментарий не найден.");
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound("Репозиторий комментариев не найден.");
+            }
 
             return RedirectToAction("Index", "Article", new { id = Id }); // Перенаправление на страницу статьи
         }

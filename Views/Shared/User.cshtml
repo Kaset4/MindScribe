@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+        @if (User != null && User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Admin"))
         {
             <form method="get" asp-controller="AccountManager" asp-action="AdminPanel">
                 <input type="submit" value="Панель администратора"/>
@@ -44,7 +44,7 @@
             <div>
                 <label class="gray-text">Список статей пользователя:</label>
 
-                @if (Model.Articles.Count != 0)
+                @if (Model.Articles != null && Model.Articles.Count != 0)
                 {
                     <div>
                         @foreach (var article in @Model.Articles)

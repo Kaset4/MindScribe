@@ -12,29 +12,21 @@ namespace MindScribe.Controllers
 {
     public class ArticleTagController: Controller
     {
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly UnitOfWork _unitOfWork;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ArticleTagController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, IMapper mapper, UnitOfWork unitOfWork)
+        public ArticleTagController(IMapper mapper, UnitOfWork unitOfWork)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _roleManager = roleManager;
         }
 
         [Authorize]
         [Route("DeleteTag")]
         [HttpPost]
-        public IActionResult DeleteTag(ArticleEditViewModel model, ArticleTag articleTag)
+        public IActionResult DeleteTag()
         {
-            
-
             return View("DeleteTag");
         }
 
@@ -46,7 +38,7 @@ namespace MindScribe.Controllers
             if (string.IsNullOrWhiteSpace(tagName))
             {
                 // Возвращаем ошибку
-                return RedirectToAction("ArticleEdit", "Article", new { id = id });
+                return RedirectToAction("ArticleEdit", "Article", new { id });
             }
 
             // Создаем новый объект ArticleTag
@@ -59,53 +51,85 @@ namespace MindScribe.Controllers
             // Сохраняем новый тег в базе данных
 
             var repository = _unitOfWork.GetRepository<ArticleTag>() as ArticleTagRepository;
-            var repositoryArticle = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
-            var editArticleViewModel = repositoryArticle.GetArticleById(id);
-
-            var model = _mapper.Map<ArticleTag>(newTag);
-
-            repository.Create(model);
+            if (repository != null)
+            {
+                var model = _mapper.Map<ArticleTag>(newTag);
+                repository.Create(model);
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound("Репозиторий не найден.");
+            }
 
             // Возвращаем успешный результат
-            return RedirectToAction("ArticleEdit", "Article", new { id = id });
+            return RedirectToAction("ArticleEdit", "Article", new { id });
         }
 
         [Authorize]
         [Route("ArticleEdit/{Id}/EditTag")]
         [HttpPost]
-        public async Task<IActionResult> EditTag(int tagId, int id, string newName)
+        public IActionResult EditTag(int tagId, int id, string newName)
         {
             if (string.IsNullOrEmpty(newName))
             {
-                return RedirectToAction("ArticleEdit", "Article", new { id = id });
+                return RedirectToAction("ArticleEdit", "Article", new { id });
             }
 
             var repository = _unitOfWork.GetRepository<ArticleTag>() as ArticleTagRepository;
-            var model = repository.GetArticleTagById(tagId);
-            var articleTag = _mapper.Map<ArticleTag>(model);
 
-            articleTag.NameTag = newName;
+            if (repository != null)
+            {
+                var model = repository.GetArticleTagById(tagId);
+                if (model != null)
+                {
+                    var articleTag = _mapper.Map<ArticleTag>(model);
+                    articleTag.NameTag = newName;
 
-            //var comment = repository.GetCommentById(commentId);
+                    repository.UpdateArticleTag(articleTag);
 
-            repository.UpdateArticleTag(articleTag);
-
-            return RedirectToAction("ArticleEdit", "Article", new { id = id }); // Перенаправление на страницу статьи
+                    return RedirectToAction("ArticleEdit", "Article", new { id }); // Перенаправление на страницу статьи
+                }
+                else
+                {
+                    // Обработка случая, когда тег не найден
+                    return NotFound("Тег не найден.");
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound("Репозиторий не найден.");
+            }
         }
 
         [Authorize]
         [Route("ArticleEdit/{Id}/DeleteTag")]
         [HttpPost]
-        public async Task<IActionResult> DeleteTag(int tagId, int id)
+        public IActionResult DeleteTag(int tagId, int id)
         {
             var repository = _unitOfWork.GetRepository<ArticleTag>() as ArticleTagRepository;
 
-            var model = repository.GetArticleTagById(tagId);
-
-            repository.Delete(model);
-
-            return RedirectToAction("ArticleEdit", "Article", new { id = id });// Перенаправление на страницу статьи
+            if (repository != null)
+            {
+                var model = repository.GetArticleTagById(tagId);
+                if (model != null)
+                {
+                    repository.Delete(model);
+                    return RedirectToAction("ArticleEdit", "Article", new { id }); // Перенаправление на страницу статьи
+                }
+                else
+                {
+                    // Обработка случая, когда тег не найден
+                    return NotFound("Тег не найден.");
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound("Репозиторий не найден.");
+            }
         }
     }
 }

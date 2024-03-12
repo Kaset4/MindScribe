@@ -6,7 +6,7 @@ namespace MindScribe.ViewModels
 {
     public class ArticleTagViewModel
     {
-        public string NameTag { get; set; }
+        public string NameTag { get; set; } = "";
 
         [Column("Article_id")]
         public int ArticleId { get; set; }

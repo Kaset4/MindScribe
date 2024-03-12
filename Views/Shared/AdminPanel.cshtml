@@ -8,7 +8,7 @@
     var userManager = ViewData["UserManager"] as UserManager<User>;
 }
 
-@if (User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+@if (User != null && User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
 {
     <div>
         <div>

@@ -41,17 +41,28 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult Index(int id)
         {
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+            ArticleRepository? repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
-            var article= repository.GetArticleById(id);
-
-
-
-            var model = _mapper.Map<ArticleViewModel>(article);
-
-            ViewData["UserManager"] = _userManager;
-
-            return View("Article", model);
+            if (repository != null)
+            {
+                var article = repository.GetArticleById(id);
+                if (article != null)
+                {
+                    var model = _mapper.Map<ArticleViewModel>(article);
+                    ViewData["UserManager"] = _userManager;
+                    return View("Article", model);
+                }
+                else
+                {
+                    // Обработка случая, когда статья не найдена
+                    return NotFound();
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound();
+            }
         }
 
         [Authorize]
@@ -63,23 +74,42 @@ namespace MindScribe.Controllers
 
             var result = await _userManager.GetUserAsync(user);
 
-            var userModel = new UserViewModel(result);
-
-            model.User_id = userModel.User.Id;
-            model.Created_at = DateTime.Now;
-            model.Updated_at = model.Created_at;
-
-
-            var article = _mapper.Map<Article>(model);
-
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
-
-            if (model != null)
+            if (result != null)
             {
-                repository.CreateArticle(article);
-            }
+                var userModel = new UserViewModel(result);
 
-            return RedirectToAction("Index", new { id = article.Id });
+                model.User_id = userModel.User.Id;
+                model.Created_at = DateTime.Now;
+                model.Updated_at = model.Created_at;
+
+                var article = _mapper.Map<Article>(model);
+
+                var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+
+                if (repository != null)
+                {
+                    if (model != null)
+                    {
+                        repository.CreateArticle(article);
+                        return RedirectToAction("Index", new { id = article.Id });
+                    }
+                    else
+                    {
+                        // Обработка случая, когда модель не была передана
+                        return BadRequest("Модель статьи не была передана.");
+                    }
+                }
+                else
+                {
+                    // Обработка случая, когда репозиторий не найден
+                    return NotFound();
+                }
+            }
+            else
+            {
+                // Обработка случая, когда пользователь не найден
+                return NotFound("Пользователь не найден.");
+            }
         }
 
         [Authorize]
@@ -91,21 +121,46 @@ namespace MindScribe.Controllers
 
             var result = await _userManager.GetUserAsync(user);
 
-            var userModel = new UserViewModel(result);
-
-
-            var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
-
-            var model = repository.GetArticleById(id);
-
-            var article = _mapper.Map<Article>(model);
-
-            if (userModel.User.Id == article.User_id)
+            if (result != null)
             {
-                repository.Delete(article);
-            }
+                var userModel = new UserViewModel(result);
 
-            return RedirectToAction("MyPage", "AccountManager");
+                ArticleRepository? repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
+
+                if (repository != null)
+                {
+                    var model = repository.GetArticleById(id);
+                    if (model != null)
+                    {
+                        var article = _mapper.Map<Article>(model);
+                        if (userModel.User.Id == article.User_id || User.IsInRole("Admin"))
+                        {
+                            repository.Delete(article);
+                            return RedirectToAction("MyPage", "AccountManager");
+                        }
+                        else
+                        {
+                            // Обработка случая, когда пользователь не имеет прав на удаление статьи
+                            return Forbid();
+                        }
+                    }
+                    else
+                    {
+                        // Обработка случая, когда статья не найдена
+                        return NotFound();
+                    }
+                }
+                else
+                {
+                    // Обработка случая, когда репозиторий не найден
+                    return NotFound();
+                }
+            }
+            else
+            {
+                // Обработка случая, когда пользователь не найден
+                return NotFound("Пользователь не найден.");
+            }
         }
 
         [Authorize]
@@ -115,23 +170,37 @@ namespace MindScribe.Controllers
         {
             var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
-            var article = repository.GetArticleById(id);
-
-            //var model = _mapper.Map<ArticleEditViewModel>(article);
-
-            var editArticleViewModel = new ArticleEditViewModel()
+            if (repository != null)
             {
-                Article_Id = id,
-                Content_article = article.Content_article,
-                Title = article.Title,
-                Created_at = (DateTime)article.Created_at,
-                Updated_at = (DateTime)article.Updated_at,
-                Tags = article.Tags
-            };
+                var article = repository.GetArticleById(id);
 
-            ViewData["UserManager"] = _userManager;
+                if (article != null)
+                {
+                    var editArticleViewModel = new ArticleEditViewModel()
+                    {
+                        Article_Id = id,
+                        Content_article = article.Content_article,
+                        Title = article.Title,
+                        Created_at = (article.Created_at as DateTime?) ?? DateTime.MinValue,
+                        Updated_at = (article.Updated_at as DateTime?) ?? DateTime.MinValue,
+                        Tags = article.Tags
+                    };
 
-            return View("ArticleEdit", editArticleViewModel);
+                    ViewData["UserManager"] = _userManager;
+
+                    return View("ArticleEdit", editArticleViewModel);
+                }
+                else
+                {
+                    // Обработка случая, когда статья не найдена
+                    return NotFound();
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound();
+            }
         }
 
         [Authorize]
@@ -141,23 +210,37 @@ namespace MindScribe.Controllers
         {
             var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
-            var article = repository.GetArticleById(id);
-
-            //var model = _mapper.Map<ArticleEditViewModel>(article);
-
-            var editArticleViewModel = new ArticleEditViewModel()
+            if (repository != null)
             {
-                Article_Id = id,
-                Content_article = article.Content_article,
-                Title = article.Title,
-                Created_at = (DateTime)article.Created_at,
-                Updated_at = (DateTime)article.Updated_at,
-                Tags = article.Tags
-            };
+                var article = repository.GetArticleById(id);
 
-            ViewData["UserManager"] = _userManager;
+                if (article != null)
+                {
+                    var editArticleViewModel = new ArticleEditViewModel()
+                    {
+                        Article_Id = id,
+                        Content_article = article.Content_article,
+                        Title = article.Title,
+                        Created_at = (article.Created_at as DateTime?) ?? DateTime.MinValue,
+                        Updated_at = (article.Updated_at as DateTime?) ?? DateTime.MinValue,
+                        Tags = article.Tags
+                    };
 
-            return View("ArticleEdit", editArticleViewModel);
+                    ViewData["UserManager"] = _userManager;
+
+                    return View("ArticleEdit", editArticleViewModel);
+                }
+                else
+                {
+                    // Обработка случая, когда статья не найдена
+                    return NotFound();
+                }
+            }
+            else
+            {
+                // Обработка случая, когда репозиторий не найден
+                return NotFound();
+            }
         }
 
         [Authorize]
@@ -175,27 +258,29 @@ namespace MindScribe.Controllers
 
                 var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
-                var article = repository.GetArticleById(model.Article_Id);
-
-                
-
-                if (article.User_id == tempUser.Id)
+                if (repository != null)
                 {
+                    var article = repository.GetArticleById(model.Article_Id);
 
-                    //user.Convert(model);
+                    if (article != null && tempUser != null && article.User_id == tempUser.Id)
+                    {
+                        article.Updated_at = DateTime.Now;
+                        article.Title = model.Title;
+                        article.Content_article = model.Content_article;
 
-                    article.Updated_at = DateTime.Now;
-                    article.Created_at = article.Created_at;
-                    article.Title = model.Title;
-                    article.Content_article = model.Content_article;
+                        repository.UpdateArticle(article);
 
-                    repository.UpdateArticle(article);
-
-                    return RedirectToAction("Index", new { id = article.Id });
+                        return RedirectToAction("Index", new { id = article.Id });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Статья не найдена или вы не являетесь её владельцем.");
+                        return View("ArticleEdit", model);
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Вы не являетесь владельцем статьи.");
+                    ModelState.AddModelError("", "Репозиторий статей не найден.");
                     return View("ArticleEdit", model);
                 }
             }
