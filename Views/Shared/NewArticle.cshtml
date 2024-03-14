@@ -5,19 +5,24 @@
 }
 
 <div>
-    <h3>Форма создания статьи</h3>
+    <h3>Добавление статьи</h3>
     <form method="post" asp-controller="Article" asp-action="CreateArticle">
         <div>
+            <label>Заголовок</label>
             <input asp-for="Title" class="form-control" />
             <span asp-validation-for="Title" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Контент</label>
             <textarea asp-for="Content_article" class="form-control"></textarea>
             <span asp-validation-for="Content_article" class="text-danger"></span>
         </div>
-        <div>
-            <label>Теги(Добавить теги можно в режиме редактирования, но не в режиме создания.):</label>
+        <div class="mt-1">
+            <label>Теги( добавить теги можно в режиме редактирования, но не в режиме создания ):</label>
         </div>
-        <input type="submit" value="Создать" />
+        <input class="btn btn-primary mt-1" type="submit" value="Добавить" />
+    </form>
+    <form method="get" asp-controller="AccountManager" asp-action="MyPage">
+        <input type="submit" class="btn btn-link p-0" value="Вернуться к списку всех статей" />
     </form>
 </div>

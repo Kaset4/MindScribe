@@ -5,33 +5,40 @@
 }
 
 <div>
-    <h3>Форма регистрации</h3>
+    <h3>Регистрация пользователя</h3>
+    <hr class="horizon-line"/>
     <form method="post" asp-controller="AccountManager" asp-action="Register">
         <div asp-validation-summary="ModelOnly"></div>
-        <div>
+        <div class="mt-2">
+            <label>Имя</label>
             <input asp-for="FirstName" class="form-control" />
             <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Фамилия</label>
             <input asp-for="LastName" class="form-control" />
             <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Логин</label>
             <input asp-for="Login" class="form-control" />
             <span asp-validation-for="Login" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Email</label>
             <input asp-for="EmailReg" class="form-control" />
             <span asp-validation-for="EmailReg" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Пароль</label>
             <input asp-for="PasswordReg" class="form-control" />
             <span asp-validation-for="PasswordReg" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Подтвердить пароль</label>
             <input asp-for="PasswordConfirm" class="form-control" />
             <span asp-validation-for="PasswordConfirm" class="text-danger"></span>
         </div>
-        <input type="submit" value="Регистрация" />
+        <input class="btn btn-primary mt-1" type="submit" value="Регистрация" />
     </form>
 </div>

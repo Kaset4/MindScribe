@@ -5,30 +5,35 @@
 }
 
 <div>
-    <h3>Форма регистрации</h3>
+    <h3>Редактирование пользователя</h3>
     <form method="post" asp-controller="AccountManager" asp-action="Update">
         <div asp-validation-summary="ModelOnly"></div>
-        <div>
+        <div class="mt-2">
+            <label>Имя</label>
             <input asp-for="FirstName" class="form-control" />
             <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Фамилия</label>
             <input asp-for="LastName" class="form-control" />
             <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Email</label>
             <input asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>Картинка</label>
             <input asp-for="Image" class="form-control" />
             <span asp-validation-for="Image" class="text-danger"></span>
         </div>
-        <div>
+        <div class="mt-1">
+            <label>О себе</label>
             <input asp-for="About" class="form-control" />
             <span asp-validation-for="About" class="text-danger"></span>
         </div>
         <input type="hidden" name="UserId" value="@Model.UserId" />
-        <input type="submit" value="Сохранить" />
+        <input class="btn btn-primary mt-1" type="submit" value="Сохранить" />
     </form>
 </div>

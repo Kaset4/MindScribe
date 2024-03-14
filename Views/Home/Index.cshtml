@@ -5,14 +5,15 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <form method="get" asp-controller="AccountManager" asp-action="Register">
-        <input type="submit" value="Регистрация"/>
-    </form>
-    
-    <form method="get" asp-controller="AccountManager" asp-action="Login">
-        <input type="submit" value="Авторизация" />
-    </form>
-    
+    <h1 class="display-4">Добро пожаловать</h1>
+    <div class="mt-2">
+        <form method="get" asp-controller="AccountManager" asp-action="Login">
+            <input class="btn btn-outline-success" type="submit" value="Авторизация" />
+        </form>
+    </div>
+    <div class="mt-2">
+        <form method="get" asp-controller="AccountManager" asp-action="Register">
+            <input class="btn btn-outline-primary" type="submit" value="Регистрация" />
+        </form>
+    </div>
 </div>

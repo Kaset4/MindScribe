@@ -78,6 +78,11 @@ namespace MindScribe.Controllers
             {
                 var userModel = new UserViewModel(result);
 
+                if (string.IsNullOrEmpty(model.Title) || string.IsNullOrEmpty(model.Content_article))
+                {
+                    return View("NewArticle", model);
+                }
+
                 model.User_id = userModel.User.Id;
                 model.Created_at = DateTime.Now;
                 model.Updated_at = model.Created_at;

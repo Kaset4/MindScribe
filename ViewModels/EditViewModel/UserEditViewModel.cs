@@ -4,17 +4,17 @@ namespace MindScribe.ViewModels.EditViewModel
 {
     public class UserEditViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Поле Имя обязательно к заполнению")]
         [DataType(DataType.Text)]
         [Display(Name = "Имя", Prompt = "Введите имя")]
         public string FirstName { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = "Поле Фамилия обязательно к заполнению")]
         [DataType(DataType.Text)]
         [Display(Name = "Фамилия", Prompt = "Введите фамилию")]
         public string LastName { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = "Поле Email обязательно к заполнению")]
         [EmailAddress]
         [Display(Name = "Email", Prompt = "example.com")]
         public string Email { get; set; } = "";

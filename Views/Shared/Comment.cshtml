@@ -4,11 +4,11 @@
     ViewData["Title"] = "Comment Page";
 }
 
-<div>
+<div class="mt-2">
     <form method="post" action="/Article/{id}/SendComment">
         <input asp-for="Content_comment" class="form-control" />
         <span class="text-danger">@Html.ValidationMessageFor(model => model.Content_comment)</span>
         <input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
-        <input type="submit" value="Отправить" />
+        <input class="btn btn-primary mt-1" type="submit" value="Оставить комментарий" />
     </form>
 </div>

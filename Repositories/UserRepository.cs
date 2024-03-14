@@ -11,7 +11,7 @@ namespace MindScribe.Repositories
 
         }
 
-        public User GetUserById(User target)
+        public User? GetUserById(User target)
         {
             var user = Set.FirstOrDefault(u => u.Id == target.Id);
 

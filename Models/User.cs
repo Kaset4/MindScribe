@@ -6,7 +6,7 @@ namespace MindScribe.Models
     {
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
-        public string? Image { get; set; }
+        public string? Image { get; set; } = "https://via.placeholder.com/500x500/";
         public string? About { get; set; }  
         public string GetFullName()
         {

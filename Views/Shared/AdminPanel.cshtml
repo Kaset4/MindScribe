@@ -13,18 +13,22 @@
     <div>
         <div>
             <h3 class="mb-0">Список пользователей:</h3>
-            <ul>
+            <div class="d-flex flex-wrap mt-2">
                 @foreach (var user in Model)
                 {
-                    <li>
-                        @user.UserName
-                        <form asp-controller="AccountManager" asp-action="DeleteUser">
-                            <input type="hidden" name="id" value="@user.Id" />
-                            <input type="submit" class="btn-danger" value="Удалить" />
-                        </form>
-                    </li>
+                    <div class="card mw-75 ms-5 mt-1">
+                        <div class="card-body">
+                            <h5 class="card-title">@user.GetFullName()</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@user.UserName</h6>
+                        <p class="card-text">@user.Id</p>
+                            <form asp-controller="AccountManager" asp-action="DeleteUser">
+                                <input type="hidden" name="id" value="@user.Id" />
+                                <input type="submit" class="btn btn-danger mt-1" value="Удалить" />
+                            </form>
+                        </div>
+                    </div>
                 }
-            </ul>
+            </div>
         </div>
     </div>
 }

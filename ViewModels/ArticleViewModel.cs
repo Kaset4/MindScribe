@@ -6,11 +6,11 @@ namespace MindScribe.ViewModels
 {
     public class ArticleViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Поле Заголовок обязательно к заполнению")]
         [Display(Name = "Название статьи", Prompt = "Введите название статьи")]
         public string Title { get; set; } = "";
 
-        [Required]
+        [Required(ErrorMessage = "Поле Контент обязательно к заполнению")]
         [Display(Name = "Контент", Prompt = "Введите текст")]
         public string Content_article { get; set; } = "";
 
