@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject Microsoft.AspNetCore.Identity.RoleManager<IdentityRole> RoleManager
+
+@{
+    ViewData["Title"] = "Role Page";
+}
+
+@if (User != null && User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Admin")))
+{
+    <div>
+        <h3 class="mb-0">Все роли:</h3>
+        <div>
+            <ol class="list-group list-group-numbered">
+                @foreach (var role in  RoleManager.Roles.ToList())
+            {
+                    <li class="list-group-item">
+                        <div class="me-auto d-flex align-items-center">
+                            <div class="m-1 fw-bold me-auto"><label>@role.Name</label></div>
+                            <div class="ms-2">
+                                <form method="post" asp-controller="Role" asp-action="DeleteRole">
+                                    <input type="hidden" name="roleName" value="@role.Name" />
+                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                </form>
+                            </div>
+                            <button class="btn btn-secondary ms-2" type="button" onclick="toggleEditForm('@role.Name')">Редактировать</button>
+                            <div class="ms-2" id="editForm-@role.Name" style="display: none;">
+                                <form method="post" asp-controller="Role" asp-action="EditRole">
+                                    <input type="hidden" name="roleName" value="@role.Name" />
+                                    <label>Новое имя:</label>
+                                    <input type="text" name="newRoleName" class="form-control" />
+                                    <input class="btn btn-success mt-1" type="submit" value="Сохранить" />
+                                </form>
+                            </div>
+                            <script>
+                                function toggleEditForm(roleName) {
+                                    var editForm = document.getElementById('editForm-' + roleName);
+                                    if (editForm.style.display === 'none') {
+                                        editForm.style.display = 'block';
+                                    } else {
+                                        editForm.style.display = 'none';
+                                    }
+                                }
+                            </script>
+                        </div>
+                    </li>
+            }
+            </ol>
+        </div>
+        <div class="mt-2">
+            <form method="post" asp-controller="Role" asp-action="CreateRole">
+                <div>
+                    <label>Новая роль:</label>
+                    <input type="text" name="roleName" class="form-control" />
+                </div>
+                <input class="btn btn-primary mt-1" type="submit" value="Создать роль" />
+            </form>
+        </div>
+    </div>
+}
