@@ -64,6 +64,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseRoleInitializerMiddleware();
 app.UseAuthentication();
 app.UseAuthorization();
 
