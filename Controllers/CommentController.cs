@@ -7,6 +7,8 @@ using MindScribe.Models;
 using MindScribe.Repositories;
 using MindScribe.ViewModels;
 using MindScribe.ViewModels.EditViewModel;
+using NLog;
+using NLog.Fluent;
 
 namespace MindScribe.Controllers
 {
@@ -18,6 +20,9 @@ namespace MindScribe.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly UnitOfWork _unitOfWork;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        private static readonly Logger LoggerAction = LogManager.GetLogger("CommentController");
+        private static readonly Logger LoggerError = LogManager.GetLogger("CommentController");
 
         public CommentController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, IMapper mapper, UnitOfWork unitOfWork)
         {
@@ -32,6 +37,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> SendComment(int Id, CommentViewModel model)
         {
+            LoggerAction.Info("Попытка отправки комментария.");
             var user = User;
 
             var result = await _userManager.GetUserAsync(user);
@@ -39,6 +45,7 @@ namespace MindScribe.Controllers
             if (result == null)
             {
                 // Обработка случая, когда пользователь не найден
+                LoggerError.Info("Ошибка. Пользователь не найден.");
                 return NotFound("Пользователь не найден.");
             }
 
@@ -49,18 +56,21 @@ namespace MindScribe.Controllers
             model.Updated_at = DateTime.Now;
             model.ArticleId = Id;
 
-            // Далее ваша логика сохранения комментария с articleId
+            
 
             var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
 
             if (repository != null)
             {
                 var commentModel = _mapper.Map<Comment>(model);
+
+                LoggerAction.Info("Успешное Создание комментария.");
                 repository.CreateComment(commentModel);
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий комментариев не найден.");
                 return NotFound("Репозиторий комментариев не найден.");
             }
 
@@ -72,6 +82,8 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult DeleteComment(int Id, int commentId)
         {
+            LoggerAction.Info("Попытка удаления комментария.");
+
             var repository = _unitOfWork.GetRepository<Comment>() as CommentRepository;
 
             if (repository != null)
@@ -80,16 +92,19 @@ namespace MindScribe.Controllers
                 if (comment != null)
                 {
                     repository.Delete(comment);
+                    LoggerAction.Info("Успешное удаление комментария.");
                 }
                 else
                 {
                     // Обработка случая, когда комментарий не найден
+                    LoggerError.Info("Ошибка. Комментарий не найден.");
                     return NotFound("Комментарий не найден.");
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound("Репозиторий комментариев не найден.");
             }
 
@@ -101,6 +116,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult EditComment(int Id, int commentId, string content)
         {
+            LoggerAction.Info("Попытка изменения комментария.");
             if (string.IsNullOrEmpty(content))
             {
                 return RedirectToAction("Index", "Article", new { id = Id });
@@ -116,16 +132,19 @@ namespace MindScribe.Controllers
                     comment.Content_comment = content;
                     comment.Updated_at = DateTime.Now;
                     repository.UpdateComment(comment);
+                    LoggerAction.Info("Успешное изменение комментария.");
                 }
                 else
                 {
                     // Обработка случая, когда комментарий не найден
+                    LoggerError.Info("Ошибка. Комментарий не найден.");
                     return NotFound("Комментарий не найден.");
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий комментариев не найден.");
                 return NotFound("Репозиторий комментариев не найден.");
             }
 

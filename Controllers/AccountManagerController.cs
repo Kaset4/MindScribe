@@ -12,6 +12,7 @@ using MindScribe.ViewModels.EditViewModel;
 using MindScribe.ViewModels.FromModel;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 
 namespace MindScribe.Controllers
 {
@@ -22,6 +23,9 @@ namespace MindScribe.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly UnitOfWork _unitOfWork;
+
+        private static readonly Logger LoggerAction = LogManager.GetLogger("HomeController");
+        private static readonly Logger LoggerError = LogManager.GetLogger("HomeController");
 
         public AccountManagerController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, UnitOfWork unitOfWork)
         {
@@ -35,6 +39,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            LoggerAction.Info("Переход на View(Login)");
             return View("Login");
         }
 
@@ -42,6 +47,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult Edit()
         {
+            LoggerAction.Info("Переход на View(editViewModel).");
             var currentUser = _userManager.GetUserAsync(User).Result;
 
             if (currentUser != null)
@@ -56,11 +62,14 @@ namespace MindScribe.Controllers
                     About = currentUser.About
                 };
 
+                LoggerAction.Info("Успешный поиск текущего пользователя.");
                 return View(editViewModel);
             }
             else
             {
                 // Обработка случая, когда текущий пользователь не найден
+                LoggerAction.Info("Пользователь не найден.");
+                LoggerError.Info("Ошибка. Пользователь не найден.");
                 return NotFound();
             }
         }
@@ -68,6 +77,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
+            LoggerAction.Info("Переход на View(new LoginViewModel { ReturnUrl = returnUrl })");
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -76,7 +86,7 @@ namespace MindScribe.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-
+            LoggerAction.Info("Процесс авторизации пользователя.");
             if (ModelState.IsValid)
             {
 
@@ -111,13 +121,15 @@ namespace MindScribe.Controllers
                         }
                         else
                         {
-
+                            LoggerAction.Info("Успешная авторизация. Переход на MyPage-AccountManager");
                             return RedirectToAction("MyPage", "AccountManager");
                         }
                     }
                 }
                 else
                 {
+                    LoggerAction.Info("Неудачаня авторизации(неправильный логин и (или) пароль).");
+                    LoggerError.Info("Ошибка. Неудачаня авторизации(неправильный логин и (или) пароль).");
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");
                     return View("Login", model);
                 }
@@ -130,6 +142,7 @@ namespace MindScribe.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            LoggerAction.Info("Выход из аккаунта. Переход на Index-Home");
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
@@ -145,6 +158,7 @@ namespace MindScribe.Controllers
 
             if (result != null)
             {
+                LoggerAction.Info("Успешный поиск пользователя. Переход на View(\"User\", model)");
                 var model = new UserViewModel(result);
                 model.Articles = await GetAllArticleByAuthor(model.User);
                 return View("User", model);
@@ -152,6 +166,8 @@ namespace MindScribe.Controllers
             else
             {
                 // Обработка случая, когда пользователь не найден
+                LoggerAction.Info("Пользователь не найден.");
+                LoggerError.Info("Ошибка. Пользователь не найден.");
                 return NotFound("Пользователь не найден.");
             }
         }
@@ -172,21 +188,28 @@ namespace MindScribe.Controllers
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
                     {
+                        LoggerAction.Info("Успешное обновление данных пользователя. Переход на MyPage-AccountManager");
                         return RedirectToAction("MyPage", "AccountManager");
                     }
                     else
                     {
+                        LoggerAction.Info("Данные не были обновлены. Перенаправление на Edit-AccountManager.");
+                        LoggerError.Info("Данные не были обновлены. Ошибка введенных данных.");
                         return RedirectToAction("Edit", "AccountManager");
                     }
                 }
                 else
                 {
                     // Обработка случая, когда пользователь не найден
+                    LoggerAction.Info("Пользователь не найден.");
+                    LoggerError.Info("Пользователь не найден.");
                     return NotFound("Пользователь не найден.");
                 }
             }
             else
             {
+                LoggerAction.Info("Данные не были обновлены. Перенаправление на View(\"Edit\", model).");
+                LoggerError.Info("Некорректные данные. Ошибка введенных данных.");
                 ModelState.AddModelError("", "Некорректные данные");
                 return View("Edit", model);
             }
@@ -210,6 +233,8 @@ namespace MindScribe.Controllers
                 var userExists = await _userManager.FindByNameAsync(model.Login);
                 if (userExists != null)
                 {
+                    LoggerAction.Info("Неудачная регистрация. Перенаправление на View(\"Register\", model).");
+                    LoggerError.Info("Ошибка. Логин уже занят. Ошибка введенных данных.");
                     ModelState.AddModelError("", "Логин уже занят");
                     return View("Register", model);
                 }
@@ -217,6 +242,8 @@ namespace MindScribe.Controllers
                 var emailExists = await _userManager.FindByEmailAsync(model.EmailReg);
                 if (emailExists != null)
                 {
+                    LoggerAction.Info("Неудачная регистрация. Перенаправление на View(\"Register\", model).");
+                    LoggerError.Info("Ошибка. Email уже занят. Ошибка в веденных данных.");
                     ModelState.AddModelError("", "Пользователь с такой почтой уже зарегистрирован");
                     return View("Register", model);
                 }
@@ -230,10 +257,12 @@ namespace MindScribe.Controllers
                     await _userManager.AddToRoleAsync(user, "User");
 
                     await _signInManager.SignInAsync(user, false);
+                    LoggerAction.Info("Удачная регистрация. Перенаправление на MyPage-AccountManager.");
                     return RedirectToAction("MyPage", "AccountManager");
                 }
                 else
                 {
+                    LoggerError.Info("Ошибка. Неудачная регистрация.");
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
@@ -251,6 +280,7 @@ namespace MindScribe.Controllers
 
         private async Task<List<Article>> GetAllArticleByAuthor(User user)
         {
+            LoggerAction.Info("Поиск всех статей пользователя.");
             return await Task.Run(() =>
             {
                 var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
@@ -262,6 +292,7 @@ namespace MindScribe.Controllers
                 else
                 {
                     // Обработка случая, когда репозиторий не найден
+                    LoggerError.Info("Ошибка. Репозиторий не найден.");
                     return new List<Article>(); // или возвращайте null или выбрасывайте исключение
                 }
             });
@@ -270,6 +301,7 @@ namespace MindScribe.Controllers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0051:Закрытые члены не используются", Justification = "<Может быть дальше понадобится.>")]
         private async Task<List<Article>> GetAllArticleByAuthor()
         {
+            LoggerAction.Info("Поиск всех статей пользователя.");
             var user = User;
 
             var result = await _userManager.GetUserAsync(user);
@@ -285,12 +317,14 @@ namespace MindScribe.Controllers
                 else
                 {
                     // Обработка случая, когда репозиторий не найден
+                    LoggerError.Info("Ошибка. Репозиторий не найден.");
                     return new List<Article>(); // или возвращайте null или выбрасывайте исключение
                 }
             }
             else
             {
                 // Обработка случая, когда пользователь не найден
+                LoggerError.Info("Ошибка. Пользователь не найден.");
                 return new List<Article>(); // или возвращайте null или выбрасывайте исключение
             }
         }
@@ -302,6 +336,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public async Task<IActionResult> AdminPanel()
         {
+            LoggerError.Info("Переход на View(\"AdminPanel\", users).");
             var users = await _userManager.Users.ToListAsync();
             return View("AdminPanel", users);
         }
@@ -320,19 +355,21 @@ namespace MindScribe.Controllers
 
                 if (repository != null)
                 {
+                    LoggerError.Info("Пользователь успешно удалён из базы.");
                     repository.DeleteUser(user);
                 }
                 else
                 {
                     // Обработка случая, когда репозиторий не найден
-                    // Можно выбросить исключение, вернуть пользователю сообщение об ошибке или выполнить другие действия
+                    LoggerError.Info("Ошибка. Репозиторий пользователей не найден.");
                     return NotFound("Репозиторий пользователей не найден.");
                 }
             }
             else
             {
                 // Обработка случая, когда пользователь не найден
-                // Можно выбросить исключение, вернуть пользователю сообщение об ошибке или выполнить другие действия
+                LoggerError.Info("Пользователей не найден.");
+                LoggerError.Info("Ошибка. Пользователей не найден.");
                 return NotFound("Пользователь не найден.");
             }
 

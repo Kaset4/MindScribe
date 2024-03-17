@@ -7,6 +7,7 @@ using MindScribe.Models;
 using MindScribe.Repositories;
 using MindScribe.ViewModels;
 using MindScribe.ViewModels.EditViewModel;
+using NLog;
 
 namespace MindScribe.Controllers
 {
@@ -15,6 +16,9 @@ namespace MindScribe.Controllers
         private readonly IMapper _mapper;
 
         private readonly UnitOfWork _unitOfWork;
+
+        private static readonly Logger LoggerAction = LogManager.GetLogger("ArticleTagController");
+        private static readonly Logger LoggerError = LogManager.GetLogger("ArticleTagController");
 
         public ArticleTagController(IMapper mapper, UnitOfWork unitOfWork)
         {
@@ -27,6 +31,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult DeleteTag()
         {
+            LoggerAction.Info("Переход на View(\"DeleteTag\")");
             return View("DeleteTag");
         }
 
@@ -35,6 +40,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult CreateTag(int id, string tagName)
         {
+            LoggerAction.Info("Попытка создания нового тега.");
             if (string.IsNullOrWhiteSpace(tagName))
             {
                 // Возвращаем ошибку
@@ -55,11 +61,13 @@ namespace MindScribe.Controllers
             if (repository != null)
             {
                 var model = _mapper.Map<ArticleTag>(newTag);
+                LoggerAction.Info("Успешное создание нового тега.");
                 repository.Create(model);
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound("Репозиторий не найден.");
             }
 
@@ -72,6 +80,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult EditTag(int tagId, int id, string newName)
         {
+            LoggerAction.Info("Попытка изменение тега.");
             if (string.IsNullOrEmpty(newName))
             {
                 return RedirectToAction("ArticleEdit", "Article", new { id });
@@ -89,17 +98,20 @@ namespace MindScribe.Controllers
 
                     repository.UpdateArticleTag(articleTag);
 
+                    LoggerAction.Info("Успешное изменение тега.");
                     return RedirectToAction("ArticleEdit", "Article", new { id }); // Перенаправление на страницу статьи
                 }
                 else
                 {
                     // Обработка случая, когда тег не найден
+                    LoggerError.Info("Ошибка. Тег не найден.");
                     return NotFound("Тег не найден.");
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound("Репозиторий не найден.");
             }
         }
@@ -109,6 +121,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult DeleteTag(int tagId, int id)
         {
+            LoggerAction.Info("Попытка удаление тега.");
             var repository = _unitOfWork.GetRepository<ArticleTag>() as ArticleTagRepository;
 
             if (repository != null)
@@ -117,17 +130,20 @@ namespace MindScribe.Controllers
                 if (model != null)
                 {
                     repository.Delete(model);
+                    LoggerAction.Info("Успешное удаление тега.");
                     return RedirectToAction("ArticleEdit", "Article", new { id }); // Перенаправление на страницу статьи
                 }
                 else
                 {
                     // Обработка случая, когда тег не найден
+                    LoggerError.Info("Ошибка. Тег не найден.");
                     return NotFound("Тег не найден.");
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound("Репозиторий не найден.");
             }
         }

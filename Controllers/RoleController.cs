@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MindScribe.Data.UoW;
 using MindScribe.Models;
+using NLog;
 
 namespace MindScribe.Controllers
 {
@@ -16,6 +17,9 @@ namespace MindScribe.Controllers
         //private readonly SignInManager<User> _signInManager;
         //private readonly UnitOfWork _unitOfWork;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        private static readonly Logger LoggerAction = LogManager.GetLogger("RoleController");
+        private static readonly Logger LoggerError = LogManager.GetLogger("RoleController");
 
         public RoleController(RoleManager<IdentityRole> roleManager)
         {
@@ -31,6 +35,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public async Task<IActionResult> Role()
         {
+            LoggerAction.Info("Переход на View(\"Role\").");
             return View("Role");
         }
 
@@ -39,6 +44,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRole(string roleName)
         {
+            LoggerAction.Info("Попытка создания роли.");
             if (ModelState.IsValid)
             {
                 var roleExist = await _roleManager.RoleExistsAsync(roleName);
@@ -48,6 +54,7 @@ namespace MindScribe.Controllers
                     if (result.Succeeded)
                     {
                         // Роль успешно создана
+                        LoggerAction.Info("Успешное создание роли.");
                         return RedirectToAction("Role");
                     }
                     else
@@ -71,6 +78,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string roleName)
         {
+            LoggerAction.Info("Попытка удаление роли.");
             if (ModelState.IsValid)
             {
                 var role = await _roleManager.FindByNameAsync(roleName);
@@ -80,6 +88,7 @@ namespace MindScribe.Controllers
                     if (result.Succeeded)
                     {
                         // Роль успешно удалена
+                        LoggerAction.Info("Успешное удаление роли.");
                         return RedirectToAction("Role");
                     }
                     else
@@ -103,6 +112,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRole(string roleName, string newRoleName)
         {
+            LoggerAction.Info("Попытка изменение роли.");
             if (ModelState.IsValid)
             {
                 var role = await _roleManager.FindByNameAsync(roleName);
@@ -113,6 +123,7 @@ namespace MindScribe.Controllers
                     if (result.Succeeded)
                     {
                         // Роль успешно отредактирована
+                        LoggerAction.Info("Успешное изменение роли.");
                         return RedirectToAction("Role");
                     }
                     else

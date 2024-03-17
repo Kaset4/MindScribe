@@ -8,6 +8,7 @@ using MindScribe.Repositories;
 using MindScribe.ViewModels;
 using MindScribe.ViewModels.EditViewModel;
 using MindScribe.ViewModels.FromModels;
+using NLog;
 
 namespace MindScribe.Controllers
 {
@@ -19,6 +20,9 @@ namespace MindScribe.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly UnitOfWork _unitOfWork;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        private static readonly Logger LoggerAction = LogManager.GetLogger("ArticleController");
+        private static readonly Logger LoggerError = LogManager.GetLogger("ArticleController");
 
         public ArticleController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager, IMapper mapper, UnitOfWork unitOfWork)
         {
@@ -34,6 +38,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult NewArticle()
         {
+            LoggerAction.Info("Переход на View(\"NewArticle\").");
             return View("NewArticle");
         }
 
@@ -41,6 +46,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult Index(int id)
         {
+            LoggerAction.Info("Попытка перехода на Article/{id}. ");
             ArticleRepository? repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
             if (repository != null)
@@ -50,17 +56,22 @@ namespace MindScribe.Controllers
                 {
                     var model = _mapper.Map<ArticleViewModel>(article);
                     ViewData["UserManager"] = _userManager;
+
+                    LoggerAction.Info("Переход на View(\"Article\", model). ");
                     return View("Article", model);
                 }
                 else
                 {
                     // Обработка случая, когда статья не найдена
+                    LoggerAction.Info("Статья не найдена.");
+                    LoggerError.Info("Ошибка. Статья не найдена.");
                     return NotFound();
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound();
             }
         }
@@ -70,6 +81,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateArticle(ArticleViewModel model)
         {
+            LoggerAction.Info("Попытка создания статьи.");
             var user = User;
 
             var result = await _userManager.GetUserAsync(user);
@@ -96,23 +108,27 @@ namespace MindScribe.Controllers
                     if (model != null)
                     {
                         repository.CreateArticle(article);
+                        LoggerAction.Info("Статья успешно создана. Переход на Index");
                         return RedirectToAction("Index", new { id = article.Id });
                     }
                     else
                     {
                         // Обработка случая, когда модель не была передана
+                        LoggerError.Info("Ошибка. Модель не была передана.");
                         return BadRequest("Модель статьи не была передана.");
                     }
                 }
                 else
                 {
                     // Обработка случая, когда репозиторий не найден
+                    LoggerError.Info("Ошибка. Репозиторий не найден.");
                     return NotFound();
                 }
             }
             else
             {
                 // Обработка случая, когда пользователь не найден
+                LoggerError.Info("Ошибка. Пользователь не найден.");
                 return NotFound("Пользователь не найден.");
             }
         }
@@ -122,6 +138,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteArticle(int id)
         {
+            LoggerAction.Info("Попытка удаление статьи.");
             var user = User;
 
             var result = await _userManager.GetUserAsync(user);
@@ -141,29 +158,35 @@ namespace MindScribe.Controllers
                         if (userModel.User.Id == article.User_id || User.IsInRole("Admin"))
                         {
                             repository.Delete(article);
+                            LoggerAction.Info("Удачное удаление статьи.");
                             return RedirectToAction("MyPage", "AccountManager");
                         }
                         else
                         {
                             // Обработка случая, когда пользователь не имеет прав на удаление статьи
+                            LoggerAction.Info("Статья не была удалена.");
+                            LoggerError.Info("Ошибка. Пользователь не имеет прав на удаление статьи. Статья не была удалена.");
                             return Forbid();
                         }
                     }
                     else
                     {
                         // Обработка случая, когда статья не найдена
+                        LoggerError.Info("Ошибка. Статья не найдена.");
                         return NotFound();
                     }
                 }
                 else
                 {
                     // Обработка случая, когда репозиторий не найден
+                    LoggerError.Info("Ошибка. Репозиторий не найден.");
                     return NotFound();
                 }
             }
             else
             {
                 // Обработка случая, когда пользователь не найден
+                LoggerError.Info("Ошибка. Пользователь не найден.");
                 return NotFound("Пользователь не найден.");
             }
         }
@@ -173,6 +196,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public IActionResult ArticleEdit(int id)
         {
+            LoggerAction.Info("Переход на ArticleEditGet.");
             var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
             if (repository != null)
@@ -193,17 +217,20 @@ namespace MindScribe.Controllers
 
                     ViewData["UserManager"] = _userManager;
 
+                    
                     return View("ArticleEdit", editArticleViewModel);
                 }
                 else
                 {
                     // Обработка случая, когда статья не найдена
+                    LoggerError.Info("Ошибка. Статья не найдена.");
                     return NotFound();
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound();
             }
         }
@@ -213,6 +240,7 @@ namespace MindScribe.Controllers
         [HttpGet]
         public IActionResult ArticleEditGet(int id)
         {
+            LoggerAction.Info("Переход на ArticleEditGet.");
             var repository = _unitOfWork.GetRepository<Article>() as ArticleRepository;
 
             if (repository != null)
@@ -238,12 +266,14 @@ namespace MindScribe.Controllers
                 else
                 {
                     // Обработка случая, когда статья не найдена
+                    LoggerError.Info("Ошибка. Статья не найдена.");
                     return NotFound();
                 }
             }
             else
             {
                 // Обработка случая, когда репозиторий не найден
+                LoggerError.Info("Ошибка. Репозиторий не найден.");
                 return NotFound();
             }
         }
@@ -253,6 +283,7 @@ namespace MindScribe.Controllers
         [HttpPost]
         public async Task<IActionResult> ArticleUpdate(ArticleEditViewModel model)
         {
+            LoggerAction.Info("Попытка обновление статьи.");
             if (ModelState.IsValid)
             {
                 //var user = await _userManager.FindByIdAsync(model.id);
@@ -275,23 +306,28 @@ namespace MindScribe.Controllers
 
                         repository.UpdateArticle(article);
 
+                        LoggerAction.Info("Удачное обновление статьи.");
                         return RedirectToAction("Index", new { id = article.Id });
                     }
                     else
                     {
                         ModelState.AddModelError("", "Статья не найдена или вы не являетесь её владельцем.");
+                        LoggerAction.Info("Статья не найдена или вы не являетесь её владельцем.");
+                        LoggerError.Info("Ошибка. Статья не найдена или вы не являетесь её владельцем.");
                         return View("ArticleEdit", model);
                     }
                 }
                 else
                 {
                     ModelState.AddModelError("", "Репозиторий статей не найден.");
+                    LoggerError.Info("Ошибка. Репозиторий не найден.");
                     return View("ArticleEdit", model);
                 }
             }
             else
             {
                 ModelState.AddModelError("", "Некорректные данные");
+                LoggerError.Info("Ошибка. Некорректные данные.");
                 return View("ArticleEdit", model);
             }
         }
