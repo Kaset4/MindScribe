@@ -62,6 +62,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseGlobalExceptionHandler();
 app.UseRouting();
 
 app.UseRoleInitializerMiddleware();
